@@ -1,5 +1,5 @@
 /config/*
-!/config/formats.ts
+!/config/**
 /logs/**/*
 /test/modlogs
 /test/replays/*.html
@@ -16,6 +16,7 @@ databases/*.db*
 *.o
 *.o.dSYM
 # Typescript build artifacts
+
 tools/set-import/importer.js
 tools/modlog/converter.js
 *.tsbuildinfo
