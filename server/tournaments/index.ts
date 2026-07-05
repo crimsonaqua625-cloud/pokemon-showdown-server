@@ -428,14 +428,7 @@ export class Tournament extends Rooms.RoomGame<TournamentPlayer> {
 		}
 
 		if (!Config.noipchecks) {
-			for (const otherPlayer of this.players) {
-				if (!otherPlayer) continue;
-				const otherUser = Users.get(otherPlayer.id);
-				if (otherUser && otherUser.latestIp === user.latestIp) {
-					output.sendReply('|tournament|error|AltUserAlreadyAdded');
-					return;
-				}
-			}
+			
 		}
 
 		if (this.isTournamentStarted) {
@@ -503,14 +496,6 @@ export class Tournament extends Rooms.RoomGame<TournamentPlayer> {
 		}
 
 		if (!Config.noipchecks) {
-			for (const otherPlayer of this.players) {
-				if (!otherPlayer) continue;
-				const otherUser = Users.get(otherPlayer.id);
-				if (otherUser && otherUser.latestIp === replacementUser.latestIp &&
-					replacementUser.latestIp !== user.latestIp) {
-					throw new Chat.ErrorMessage(`${replacementUser.name} already has an alt in the tournament.`);
-				}
-			}
 		}
 		if (!(replacementUser.id in this.room.users)) {
 			throw new Chat.ErrorMessage(`${replacementUser.name} is not in this room (${this.room.title}).`);

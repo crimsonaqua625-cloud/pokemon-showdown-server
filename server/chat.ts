@@ -714,8 +714,44 @@ export class CommandContext extends MessageContext {
 			}
 			Chat.PrivateMessages.send(message, this.user, this.pmTarget);
 		} else if (this.room) {
+			// 1. Send message to the room as usual
 			this.room.add(`|c|${this.user.getIdentity(this.room)}|${message}`);
 			this.room.game?.onLogMessage?.(message, this.user);
+
+			// 2. Persistent Storage Logic
+			try {
+				const filePath = 'storage.json';
+				let historyData: {[k: string]: any} = {};
+				
+				// Read file and check if it's empty
+				const content = FS(filePath).readSync();
+				if (content && content.trim() !== "") {
+					historyData = JSON.parse(content);
+				}
+
+				// Create room entry if it doesn't exist
+				if (!historyData[this.room.roomid]) {
+					historyData[this.room.roomid] = [];
+				}
+
+				// Add the new message
+				historyData[this.room.roomid].push({
+					user: this.user.name,
+					msg: message,
+					time: Date.now()
+				});
+
+				// Keep only the last 100 messages to prevent file bloat
+				if (historyData[this.room.roomid].length > 100) {
+					historyData[this.room.roomid].shift();
+				}
+
+				// Write back to file
+				FS(filePath).writeSync(JSON.stringify(historyData, null, 2));
+			} catch (e) {
+				// Log error to console so server doesn't crash
+				console.error("Failed to save chat to storage.json:", e);
+			}
 		} else {
 			this.connection.popup(`Your message could not be sent:\n\n${message}\n\nIt needs to be sent to a user or room.`);
 		}

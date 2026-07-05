@@ -764,8 +764,16 @@ export class RandomFFATeams extends RandomTeams {
 		species: Species,
 	): number {
 		if (this.adjustLevel) return this.adjustLevel;
+		
+		// Ultimate Safe Guard: Return a default if data objects do not exist
+		if (!this.randomSets || !this.randomSets[species.id]) {
+			return 80; 
+		}
+		
 		return this.randomSets[species.id].level!;
 	}
+
+
 
 	override randomSet(
 		s: string | Species,
